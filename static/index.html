@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Parallel Processing | سعید حق نظری</title>
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <!-- فونت Fira Code برای نمایش بهتر کد -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="card">
+        <div class="header">
+          <h1>پروژه پایانی درس پردازش موازی</h1>
+          <div class="student-name">🎓 سعید حق نظری</div>
+        </div>
+
+        <div class="content">
+          <!-- روش -->
+          <div class="form-group">
+            <label><i>🔄</i> روش:</label>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input type="radio" name="method" value="thread" checked />
+                <span>🧵 نخ (Thread)</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="method" value="process" />
+                <span>⚙️ فرایند (Process)</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- ابزار همزمانی -->
+          <div class="form-group">
+            <label><i>🛠️</i> ابزار همزمانی:</label>
+            <select id="toolSelect"></select>
+            <div class="info-box" id="toolInfo"><i>📖</i></div>
+          </div>
+
+          <!-- سناریو -->
+          <div class="form-group">
+            <label><i>📋</i> سناریو:</label>
+            <select id="scenarioSelect"></select>
+            <div class="info-box" id="scenarioInfo"></div>
+          </div>
+
+          <!-- کد سناریو -->
+          <div class="code-wrapper">
+            <div class="code-title"><span>🐍</span> کد پایتون این سناریو</div>
+            <div class="code-container">
+    <button class="copy-code-btn" id="copyScenarioBtn" onclick="copyScenarioCode()">Copy📋</button>
+    <pre dir="ltr" id="scenarioCodePre" style="margin:0; padding:20px; padding-top:48px;"><div id="scenarioCodeText" style="display: inline; font-family: monospace;"></div></pre>
+</div>
+
+          <!-- دکمه ارسال -->
+          <button class="btn-submit" id="submitBtn" onclick="runScenario()">
+            🚀 ارسال
+          </button>
+
+          <!-- لودینگ -->
+          <div class="loading" id="loadingArea">
+            <div class="spinner"></div>
+            <p>در حال اجرای سناریو...</p>
+          </div>
+
+          <!-- نتیجه -->
+          <div class="result-box" id="resultBox" style="display: none">
+            <div class="result-header">📤 خروجی الگوریتم</div>
+            <div class="result-body">
+              <div class="result-output" id="outputText" dir="ltr"></div>
+              <div class="result-header">📖 توضیحات</div>
+              <div class="result-explanation" id="explanationText"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer">📚 دانشکده فنی دانشگاه لرستان | بهار 1405</div>
+      </div>
+    </div>
+
+    <!-- بارگذاری فایل‌های JS -->
+    <script src="/static/js/tools.js"></script>
+    <script src="/static/js/scenarios.js"></script>
+    <script src="/static/js/scenario_codes.js"></script>
+    <script src="/static/js/script.js"></script>
+  </body>
+</html>

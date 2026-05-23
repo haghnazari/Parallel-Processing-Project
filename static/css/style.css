@@ -1,0 +1,535 @@
+/* ============================================
+   پروژه پردازش موازی - استایل کامل
+   دانشجو: سعید حق نظری
+   ============================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary: #4361ee;
+    --primary-dark: #3a0ca3;
+    --secondary: #4cc9f0;
+    --success: #06d6a0;
+    --warning: #f8961e;
+    --danger: #ef476f;
+    --dark: #1a1a2e;
+    --light: #f8f9fa;
+    --gray: #6c757d;
+    --gray-light: #e2e8f0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--dark) 0%, #16213e 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* ============================================
+   کارت اصلی
+   ============================================ */
+.card {
+    background: white;
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+/* ============================================
+   هدر
+   ============================================ */
+.header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+    padding: 10px 30px;
+    text-align: center;
+}
+
+.header h1 {
+    font-size: 2rem;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+}
+
+.header .student-name {
+    display: inline-flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 15px;
+    flex-wrap: wrap;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 5px 14px;
+    border-radius: 50px;
+    font-size: 1rem;
+    backdrop-filter: blur(4px);
+}
+
+/* ============================================
+   محتوای اصلی
+   ============================================ */
+.content {
+    padding: 30px;
+}
+
+/* ============================================
+   گروه فرم
+   ============================================ */
+.form-group {
+    margin-bottom: 25px;
+}
+
+label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--dark);
+    font-size: 0.9rem;
+}
+
+label i {
+    margin-left: 8px;
+}
+
+/* ============================================
+   استایل رادیو باتن برای روش
+   ============================================ */
+.radio-group {
+    display: flex;
+    gap: 20px;
+    background: var(--light);
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 2px solid var(--gray-light);
+    transition: all 0.3s ease;
+}
+
+.radio-group:hover {
+    border-color: var(--primary);
+}
+
+.radio-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+
+.radio-option input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--primary);
+}
+
+.radio-option input[type="radio"]:disabled + span {
+    color: var(--gray);
+    cursor: not-allowed;
+}
+
+/* ============================================
+   استایل سلکت‌ها
+   ============================================ */
+select {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    border: 2px solid var(--gray-light);
+    border-radius: 12px;
+    font-family: inherit;
+    transition: all 0.3s ease;
+    background: white;
+    cursor: pointer;
+}
+
+select:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+}
+
+select:disabled {
+    background: var(--light);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* ============================================
+   توضیحات ابزار و سناریو
+   ============================================ */
+.info-box {
+    margin-top: 10px;
+    padding: 12px 16px;
+    background: #f0f4ff;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    color: var(--primary-dark);
+    border-right: 4px solid var(--primary);
+}
+
+.info-box i {
+    margin-left: 8px;
+}
+
+/* ============================================
+   دکمه ارسال
+   ============================================ */
+.btn-submit {
+    width: 100%;
+    padding: 14px 20px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.btn-submit:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgba(67, 97, 238, 0.4);
+}
+
+.btn-submit:active:not(:disabled) {
+    transform: translateY(1px);
+}
+
+.btn-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ============================================
+   لودینگ
+   ============================================ */
+.loading {
+    text-align: center;
+    padding: 30px;
+    display: none;
+}
+
+.spinner {
+    width: 45px;
+    height: 45px;
+    border: 4px solid var(--gray-light);
+    border-top: 4px solid var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading p {
+    margin-top: 12px;
+    color: var(--gray);
+}
+
+/* ============================================
+   استایل کد پایتون (مثل پاسخ‌های ChatGPT)
+   ============================================ */
+
+.code-wrapper {
+    margin: 20px 0;
+}
+
+.code-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* کانتینر اصلی کد */
+.code-container {
+    position: relative;
+    background: #1e1e2e;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #313244;
+}
+
+/* دکمه کپی در گوشه بالا سمت راست */
+.copy-code-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: #313244;
+    color: #cdd6f4;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 0.7rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+    backdrop-filter: blur(4px);
+}
+
+.copy-code-btn:hover {
+    background: #45475a;
+    color: white;
+}
+
+.copy-code-btn.copied {
+    background: #a6e3a1;
+    color: #1e1e2e;
+}
+
+/* محتوای کد */
+.code-container pre {
+    margin: 0;
+    padding: 20px;
+    padding-top: 48px;
+    font-family: 'Fira Code', 'Courier New', 'Consolas', monospace;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: #cdd6f4;
+    white-space: pre-wrap;
+    word-break: break-word;
+    direction: ltr;
+    text-align: left;
+    max-height: 500px;
+    overflow-y: auto;
+    background: #1e1e2e;
+}
+
+/* ============================================
+   هایلایت سینتکس (رنگی کردن کد پایتون)
+   ============================================ */
+
+/* کلمات کلیدی پایتون */
+.hljs-keyword {
+    color: #cba6f7;
+    font-weight: 500;
+}
+
+/* توابع */
+.hljs-function {
+    color: #89dceb;
+}
+
+/* رشته‌ها */
+.hljs-string {
+    color: #a6e3a1;
+}
+
+/* اعداد */
+.hljs-number {
+    color: #fab387;
+}
+
+/* نظرات */
+.hljs-comment {
+    color: #6c7086;
+    font-style: italic;
+}
+
+/* عملگرها */
+.hljs-operator {
+    color: #89dceb;
+}
+
+/* کلاس‌ها */
+.hljs-class {
+    color: #f9e2af;
+}
+
+/* دکوراتورها */
+.hljs-decorator {
+    color: #89b4fa;
+}
+
+/* متغیرها */
+.hljs-variable {
+    color: #f38ba8;
+}
+
+/* پارامترها */
+.hljs-params {
+    color: #89b4fa;
+}
+
+/* ============================================
+   اسکرول بار سفارشی برای بخش کد
+   ============================================ */
+
+.code-container pre::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.code-container pre::-webkit-scrollbar-track {
+    background: #313244;
+    border-radius: 4px;
+}
+
+.code-container pre::-webkit-scrollbar-thumb {
+    background: #585b70;
+    border-radius: 4px;
+}
+
+.code-container pre::-webkit-scrollbar-thumb:hover {
+    background: #6c7086;
+}
+
+/* ============================================
+   باکس نتیجه
+   ============================================ */
+/* ============================================
+   باکس نتیجه - طراحی مدرن و جذاب
+   ============================================ */
+
+.result-box {
+    margin-top: 25px;
+    background: transparent;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+/* هدر خروجی - بدون کادر مشکی */
+.result-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: var(--primary);
+    padding: 0 0 10px 0;
+    font-weight: 600;
+    font-size: 0.85rem;
+    border-bottom: 2px solid var(--primary);
+    margin-bottom: 15px;
+    letter-spacing: 0.5px;
+}
+
+/* محتوای اصلی */
+.result-body {
+    padding: 0;
+}
+
+/* بخش خروجی الگوریتم (کدها) */
+.result-output {
+    background: #0f172a;
+    color: #4ec9b0;
+    padding: 16px;
+    border-radius: 12px;
+    font-family: 'Fira Code', 'Courier New', monospace;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    margin-bottom: 16px;
+    max-height: 450px;
+    overflow-y: auto;
+    border: 1px solid #1e293b;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* اسکرول بار برای خروجی */
+.result-output::-webkit-scrollbar {
+    width: 6px;
+}
+
+.result-output::-webkit-scrollbar-track {
+    background: #43484f;
+    border-radius: 3px;
+}
+
+.result-output::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 3px;
+}
+
+.result-output::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+
+/* بخش توضیحات */
+.result-explanation {
+    background: #f0f9ff;
+    padding: 16px;
+    border-radius: 12px;
+    color: #0369a1;
+    line-height: 1.6;
+    font-size: 0.85rem;
+    white-space: pre-wrap;
+    border-right: 4px solid var(--primary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* حالت خطا */
+.error-output {
+    background: #451a1a;
+    color: #f87171;
+    border-color: #7f1a1a;
+}
+
+.error-explanation {
+    background: #fee2e2;
+    color: #991b1b;
+    border-right-color: #ef4444;
+}
+
+/* ============================================
+   فوتر
+   ============================================ */
+.footer {
+    background: #f1f5f9;
+    padding: 16px;
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--gray);
+    border-top: 1px solid var(--gray-light);
+}
+
+/* ============================================
+   پاسخگویی (موبایل)
+   ============================================ */
+@media (max-width: 700px) {
+    body {
+        padding: 10px;
+    }
+    
+    .content {
+        padding: 20px;
+    }
+    
+    .header h1 {
+        font-size: 1.4rem;
+    }
+    
+    .result-output {
+        font-size: 0.65rem;
+    }
+    
+    .code-container pre {
+        font-size: 0.7rem;
+        padding: 12px;
+        padding-top: 45px;
+    }
+    
+    .copy-code-btn {
+        padding: 4px 10px;
+        font-size: 0.65rem;
+    }
+}
+
