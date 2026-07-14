@@ -209,7 +209,7 @@ docker compose up --build -d
 ```
 
 **خروجی:**
-![Docker Build](./images/3.1.jpg)
+![Docker Build](./images/3.1.JPG)
 
 ✅ بررسی صحت اجرای کانتینر
 
@@ -222,7 +222,7 @@ docker ps
 همان‌طور که در تصویر زیر مشخص است، کانتینر `parallel_processing_container` با وضعیت `Up` در حال اجراست و پورت `8000` آن به‌درستی به سیستم میزبان نگاشت (Map) شده است. در خروجی دستور `docker ps` ستون **STATUS** نشان‌دهنده وضعیت اجرای کانتینر، ستون **PORTS** بیانگر نگاشت پورت‌های کانتینر به سیستم میزبان و ستون **NAMES** نام کانتینر در حال اجرا را نمایش می‌دهد.
 
 خروجی:
-![Docker PS](./images/3.2.jpg)
+![Docker PS](./images/3.2.JPG)
 
 ---
 
@@ -239,7 +239,7 @@ docker compose logs -f
 - Application startup complete
 - Uvicorn running on [http://0.0.0.0:8000](http://0.0.0.0:8000)
 خروجی:
-![Docker Logs](./images/3.3.jpg)
+![Docker Logs](./images/3.3.JPG)
 
 ---
 
@@ -249,7 +249,7 @@ docker compose logs -f
 در این مرحله علاوه بر نمایش صفحه اصلی، فایل‌های استاتیک پروژه (CSS و JavaScript) نیز بدون خطا بارگذاری شدند و ارتباط صحیح رابط کاربری با APIهای پیاده‌سازی‌شده در FastAPI مورد بررسی قرار گرفت.
 
 خروجی:
-![Browser Test](./images/3.4.jpg)
+![Browser Test](./images/3.4.JPG)
 
 ---
 
@@ -281,7 +281,7 @@ docker compose logs -f
 در زمان ایجاد Repository، گزینه **Public Repository** انتخاب شد تا پروژه به صورت عمومی در دسترس باشد.
 
 **خروجی:**
-![Public Repository](./images/4.1.jpg)
+![Public Repository](./images/4.1.JPG)
 ---
 
 ## 🔗 اتصال پروژه محلی به Repository
@@ -358,7 +358,7 @@ git push
 در Repository قابل مشاهده هستند.
 
 **خروجی:**
-![Repository](./images/4.2.png)
+![Repository](./images/4.2.PNG)
 
 ---
 
