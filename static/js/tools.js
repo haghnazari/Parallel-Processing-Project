@@ -1,15 +1,14 @@
-// ============================================
-// لیست ابزارها بر اساس روش
-// ============================================
-
 const THREAD_TOOLS = [
-    { id: "lock", name: "Lock", desc: "همگام‌سازی نخ با یک قفل ساده" },
-    { id: "rlock", name: "RLock", desc: "همگام‌سازی نخ با قفل قابل بازگشت" },
-    { id: "semaphore", name: "Semaphore", desc: "همگام‌سازی نخ با سمافور" },
-    { id: "condition", name: "Condition", desc: "همگام‌سازی نخ با شرط" },
-    { id: "event", name: "Event", desc: "همگام‌سازی نخ با رویداد" },
-    { id: "barrier", name: "Barrier", desc: "همگام‌سازی نخ با مانع" },
-    { id: "queue", name: "Queue", desc: "ارتباط نخ‌ها با صف" }
+    { id: "defining", name: "Defining a thread", desc: "تعریف و اجرای یک نخ ساده" },
+    { id: "determining", name: "Determining the current thread", desc: "تشخیص و نمایش نخ جاری" },
+    { id: "subclass", name: "Defining a thread subclass", desc: "تعریف نخ با استفاده از زیرکلاس" },
+    { id: "lock", name: "Thread synchronization with a lock", desc: "همگام‌سازی نخ با قفل ساده" },
+    { id: "rlock", name: "Thread synchronization with RLock", desc: "همگام‌سازی نخ با قفل قابل بازگشت" },
+    { id: "semaphore", name: "Thread synchronization with semaphores", desc: "همگام‌سازی نخ با سمافور" },
+    { id: "condition", name: "Thread synchronization with a condition", desc: "همگام‌سازی نخ با شرط" },
+    { id: "event", name: "Thread synchronization with an event", desc: "همگام‌سازی نخ با رویداد" },
+    { id: "barrier", name: "Thread synchronization with a barrier", desc: "همگام‌سازی نخ با مانع" },
+    { id: "queue", name: "Thread communication using a queue", desc: "ارتباط نخ‌ها با صف" }
 ];
 
 const PROCESS_TOOLS = [
