@@ -306,8 +306,6 @@ git remote add origin https://github.com/haghnazari/Parallel-Processing-Project.
 git remote -v
 ```
 
-**خروجی:**
-
 ---
 
 ## 📦 ثبت تغییرات پروژه (Commit)
@@ -326,8 +324,6 @@ git commit -m "Initial Dockerized Parallel Processing Project"
 
 عملیات Commit باعث می‌شود یک Snapshot از وضعیت فعلی پروژه در تاریخچه Git ذخیره شود.
 
-**خروجی:**
-
 ---
 
 ## 🚀 ارسال پروژه به GitHub
@@ -344,7 +340,6 @@ git push -u origin main
 git push
 ```
 
-**خروجی:**
 
 ---
 
@@ -363,6 +358,7 @@ git push
 در Repository قابل مشاهده هستند.
 
 **خروجی:**
+![Repository](./images/4.2.png)
 
 ---
 
