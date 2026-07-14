@@ -1,0 +1,7 @@
+services:
+  api:
+    build: .
+    container_name: parallel_processing_container
+    restart: always
+    ports:
+      - "8000:8000"

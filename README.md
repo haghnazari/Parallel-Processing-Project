@@ -149,160 +149,223 @@ Process-Based Parallelism
 
 ```tree
 ParallelProcessingProject/
+├── .venv/
 ├── app/
 │   ├── __init__.py
-│   ├── main.py              # FastAPI endpoints
-│   ├── lock.py              # سناریوهای Lock
-│   ├── rlock.py             # سناریوهای RLock (در آینده)
-│   └── ...
+│   ├── main.py
+│   ├── registry.py
+│   ├── thread/
+│   │   ├── __init__.py
+│   │   ├── lock.py
+│   │   ├── rlock.py
+│   │   ├── semaphore.py
+│   │   ├── condition.py
+│   │   ├── event.py
+│   │   ├── barrier.py
+│   │   ├── queue.py
+│   │   ├── defining.py
+│   │   ├── determining.py
+│   │   └── subclass.py
+│   │
+│   └── process/
+│       ├── __init__.py
+│       ├── spawning.py
+│       ├── naming.py
+│       ├── background.py
+│       ├── killing.py
+│       ├── subclass.py
+│       ├── queue.py
+│       ├── pipes.py
+│       ├── sync.py
+│       └── pool.py
+│
 ├── static/
 │   ├── css/
 │   │   └── style.css
-│   ├── js/
-│   │   ├── script.js
-│   │   ├── tools.js
-│   │   ├── scenarios.js
-│   │   └── scenario_codes.js
-│   └── index.html
-├── requirements.txt
+│   └── js/
+│       ├── script.js
+│       ├── tools.js
+│       └── scenarios.js
+│
 ├── .gitignore
-└── README.md
+├── README.md
+└── requirements.txt
 ```
 
+## 🐋 فاز سوم: داکرایز کردن پروژه (Dockerization)
 
+در این فاز، به‌منظور ایجاد یک محیط اجرای یکپارچه و مستقل از سیستم‌عامل میزبان، کل پروژه به همراه وب‌سرویس FastAPI داکرایز (Dockerized) شد. استفاده از Docker باعث می‌شود تمام وابستگی‌های نرم‌افزاری، نسخه Python و تنظیمات محیط اجرا در قالب یک Image استاندارد بسته‌بندی شوند و پروژه بدون نیاز به پیکربندی مجدد روی هر سیستم یا سرور لینوکسی اجرا گردد. همچنین اجرای پروژه در محیط لینوکسی Docker، بستری مناسب برای آزمایش و اجرای ابزارهای پردازش موازی مبتنی بر `multiprocessing` فراهم می‌کند.
 
+### 🏗️ ساختار پیکربندی داکر
 
+برای ساخت Image پروژه از نسخه سبک `python:3.12-slim` استفاده شد تا حجم نهایی Image کاهش یابد و زمان Build کوتاه‌تر شود. در Dockerfile ابتدا وابستگی‌های پروژه از طریق فایل `requirements.txt` نصب شده و سپس کد برنامه داخل Image کپی می‌شود. در نهایت، وب‌سرور ASGI یعنی **Uvicorn** به عنوان نقطه شروع (Entrypoint) کانتینر اجرا شده و درخواست‌های HTTP را روی پورت `8000` دریافت می‌کند.
 
-## 🔒 سناریوهای Lock
+### 🚀 دستورات راه‌اندازی و ساخت کانتینر
 
-### سناریو 1: Race Condition
+برای ساخت Image پروژه بر اساس Dockerfile و اجرای کانتینر در حالت Detached از دستور زیر استفاده شد:
 
-**هدف:** نمایش تداخل نخ‌ها در دسترسی به متغیر مشترک بدون قفل
-
-**کد اصلی:**
-
-```python
-def lock_scenario1():
-    counter = 0
-    class CounterThread(Thread):
-        def run(self):
-            nonlocal counter
-            temp = counter
-            time.sleep(0.0001)
-            counter = temp + 1
+```bash
+docker compose up --build -d
 ```
 
+**خروجی:**
+![Docker Build](./images/3.1.jpg)
 
-**خروجی:** مقدار نهایی counter کمتر از 10 است
+✅ بررسی صحت اجرای کانتینر
 
-**نکته آموزشی:** این سناریو نشان می‌دهد که بدون قفل، نخ‌ها با هم تداخل می‌کنند و برخی افزایش‌ها از دست می‌روند.
+پس از بالا آمدن کانتینر، برای اطمینان از سالم بودن اجرای آن، وضعیت کانتینرهای در حال اجرا بررسی شد:
 
-
-
-### سناریو 2: همگام‌سازی با Lock
-
-**هدف:** حل مشکل Race Condition با استفاده از قفل
-
-**کد اصلی:**
-```python
-def lock_scenario2():
-    threadLock = threading.Lock()
-    class CounterThread(Thread):
-        def run(self):
-	        nonlocal counter
-            threadLock.acquire()
-            temp = counter
-            time.sleep(0.0001)
-            counter = temp + 1
-            threadLock.release()
+```bash
+docker ps
 ```
 
-**خروجی:** مقدار نهایی counter = 10
+همان‌طور که در تصویر زیر مشخص است، کانتینر `parallel_processing_container` با وضعیت `Up` در حال اجراست و پورت `8000` آن به‌درستی به سیستم میزبان نگاشت (Map) شده است. در خروجی دستور `docker ps` ستون **STATUS** نشان‌دهنده وضعیت اجرای کانتینر، ستون **PORTS** بیانگر نگاشت پورت‌های کانتینر به سیستم میزبان و ستون **NAMES** نام کانتینر در حال اجرا را نمایش می‌دهد.
 
-**نکته آموزشی:** قفل تضمین می‌کند که هر بار فقط یک نخ به متغیر مشترک دسترسی دارد.
+خروجی:
+![Docker PS](./images/3.2.jpg)
 
-### سناریو 3: شبیه‌سازی سیستم بانکی
+---
 
-**هدف:** کاربرد عملی Lock در دنیای واقعی
+📜 مشاهده لاگ‌های زنده Uvicorn
 
-**کد اصلی:**
-```python
-def lock_scenario3():
-    bank_lock = threading.Lock()
-    balance = 1000  # Initial account balance
-    output = []
-    transaction_count = 0
-    failed_transactions = 0
-    
-    class BankTransaction(Thread):
-        def __init__(self, name, amount, transaction_type):
-            Thread.__init__(self)
-            self.name = name
-            self.amount = amount
-            self.transaction_type = transaction_type  # "Deposit" or "Withdraw"
-        
-        def run(self):
-            nonlocal balance, transaction_count, failed_transactions
-            bank_lock.acquire()
-            old_balance = balance
-            output.append(f"START    ----> {self.name}: type={self.transaction_type}, amount={self.amount}, balance_before={old_balance}")
-            time.sleep(0.01)
-            if self.transaction_type == "Deposit":
-                balance += self.amount
-                output.append(f"DEPOSIT ----> {self.name}: +{self.amount} | new_balance={balance}")
-                transaction_count += 1
-                
-            elif self.transaction_type == "Withdraw":
-                if balance >= self.amount:
-                    balance -= self.amount
-                    output.append(f"WITHDRAW ----> {self.name}: -{self.amount} | new_balance={balance}")
-                    transaction_count += 1
-                else:
-                    output.append(f"REJECTED ----> {self.name}: withdraw {self.amount} FAILED! (insufficient balance: {balance})")
-                    failed_transactions += 1       
-            time.sleep(0.005)
-            output.append(f"END      ----> {self.name}: Final_balance={balance}\n")
-            bank_lock.release()
-    
-    # ایجاد تراکنش‌های تصادفی
-    transactions = []
-    for i in range(10):
-        amount = randint(300, 800)
-        ta = ["Deposit", "Withdraw"][randint(0,1)]
-        t = BankTransaction(f"{ta}#{i+1}", amount, ta)
-        transactions.append(t)
-    
-    for t in transactions:
-        t.start()
-    
-    for t in transactions:
-        t.join()
+برای اطمینان از این‌که وب‌سرور Uvicorn داخل کانتینر بدون خطا بالا آمده و آماده پذیرش درخواست است، لاگ‌های زنده کانتینر بررسی شد:
+
+```bash
+docker compose logs -f
 ```
 
-**ویژگی‌ها:**
+> وجود پیام‌های زیر نشان می‌دهد که برنامه بدون خطا مقداردهی اولیه شده و وب‌سرور آماده پاسخ‌گویی به درخواست‌های HTTP است:
 
-- ✅ تراکنش‌های همزمان (واریز و برداشت)
-    
-- ✅ بررسی موجودی قبل از برداشت
-    
-- ✅ نمایش تراکنش‌های ناموفق
-    
-- ✅ نمایش موجودی قبل و بعد از هر تراکنش
+- Application startup complete
+- Uvicorn running on [http://0.0.0.0:8000](http://0.0.0.0:8000)
+خروجی:
+![Docker Logs](./images/3.3.jpg)
 
+---
 
-**خروجی نمونه:**
-```text
-START    ----> Deposit#1: type=Deposit, amount=350, balance_before=1000
-DEPOSIT ----> Deposit#1: +350 | new_balance=1350
-END      ----> Deposit#1: Final_balance=1350
+🌐 تست دسترسی از مرورگر
 
-START    ----> Withdraw#1: type=Withdraw, amount=500, balance_before=1350
-WITHDRAW ----> Withdraw#1: -500 | new_balance=850
-END      ----> Withdraw#1: Final_balance=850
+در نهایت، صحت عملکرد کامل وب‌سرویس (شامل بارگذاری صفحه اصلی، فایل‌های استاتیک CSS و JavaScript، و اتصال صحیح به API) از طریق مرورگر روی آدرس `http://localhost:8000` بررسی شد.
+در این مرحله علاوه بر نمایش صفحه اصلی، فایل‌های استاتیک پروژه (CSS و JavaScript) نیز بدون خطا بارگذاری شدند و ارتباط صحیح رابط کاربری با APIهای پیاده‌سازی‌شده در FastAPI مورد بررسی قرار گرفت.
 
-START    ----> Withdraw#2: type=Withdraw, amount=700, balance_before=850
-REJECTED ----> Withdraw#2: withdraw 700 FAILED! (insufficient balance: 850)
-END      ----> Withdraw#2: Final_balance=850
+خروجی:
+![Browser Test](./images/3.4.jpg)
+
+---
+
+📄 جمع‌بندی فاز سوم
+
+در پایان این فاز، پروژه با موفقیت در قالب یک Docker Image مستقل بسته‌بندی شد. این Image شامل تمامی وابستگی‌های نرم‌افزاری، کد برنامه، فایل‌های استاتیک و تنظیمات موردنیاز برای اجرای وب‌سرویس است. با اجرای این Image در قالب کانتینر، پروژه بدون وابستگی به محیط سیستم‌عامل میزبان اجرا می‌شود و امکان استقرار آسان آن روی هر سرور لینوکسی فراهم خواهد شد. این موضوع علاوه بر افزایش قابلیت حمل (Portability)، فرآیند توسعه، آزمون و استقرار نهایی پروژه را نیز ساده‌تر می‌کند.
+
+## فایل‌های ایجاد شده در این فاز
+
+|فایل|وظیفه|
+|---|---|
+|Dockerfile|ساخت Image پروژه|
+|docker-compose.yml|مدیریت اجرای کانتینرها|
+|requirements.txt|وابستگی‌های پایتون|
+|.dockerignore|جلوگیری از کپی فایل‌های غیرضروری داخل Image|
+
+# 🌐 فاز چهارم: بارگذاری پروژه در GitHub (Version Control & Repository)
+
+در این فاز، پس از تکمیل داکرایز کردن پروژه، کلیه فایل‌های پروژه در یک مخزن (Repository) در GitHub بارگذاری شدند. استفاده از GitHub علاوه بر نگهداری نسخه‌های مختلف پروژه، امکان توسعه گروهی، مدیریت تغییرات، تهیه نسخه پشتیبان و استقرار (Deployment) پروژه روی سرور را فراهم می‌کند.
+
+در این پروژه، فایل‌های مربوط به برنامه FastAPI، فایل‌های Docker، تنظیمات پروژه و سایر منابع موردنیاز همگی در قالب یک مخزن Git مدیریت شدند.
+
+---
+
+## 🏗️ ایجاد Repository در GitHub
+
+ابتدا یک Repository جدید در حساب GitHub ایجاد شد تا تمام فایل‌های پروژه در آن نگهداری شوند.
+
+در زمان ایجاد Repository، گزینه **Public Repository** انتخاب شد تا پروژه به صورت عمومی در دسترس باشد.
+
+**خروجی:**
+![Public Repository](./images/4.1.jpg)
+---
+
+## 🔗 اتصال پروژه محلی به Repository
+
+پس از ایجاد Repository، پروژه محلی که در محیط توسعه (IDE) قرار داشت به مخزن Git متصل شد.
+
+ابتدا در صورت نیاز، مخزن Git در پوشه پروژه مقداردهی اولیه گردید:
+
+```
+git init
 ```
 
-**نکته آموزشی:** این سناریو کاربرد واقعی Lock در سیستم‌های بانکی، صف‌های خرید، رزرو بلیط و انبارداری را نشان می‌دهد.
+سپس آدرس Repository به عنوان مخزن راه‌دور (Remote Repository) ثبت شد:
+
+```
+git remote add origin https://github.com/haghnazari/Parallel-Processing-Project.git
+```
+
+برای اطمینان از صحت اتصال، فهرست مخزن‌های راه‌دور بررسی شد:
+
+```
+git remote -v
+```
+
+**خروجی:**
+
+---
+
+## 📦 ثبت تغییرات پروژه (Commit)
+
+پس از اتصال پروژه به GitHub، تمامی فایل‌های پروژه به ناحیه Stage اضافه شدند:
+
+```
+git add .
+```
+
+سپس اولین نسخه پروژه با یک پیام مناسب ثبت (Commit) شد:
+
+```
+git commit -m "Initial Dockerized Parallel Processing Project"
+```
+
+عملیات Commit باعث می‌شود یک Snapshot از وضعیت فعلی پروژه در تاریخچه Git ذخیره شود.
+
+**خروجی:**
+
+---
+
+## 🚀 ارسال پروژه به GitHub
+
+در مرحله بعد، نسخه ثبت‌شده پروژه به مخزن GitHub ارسال شد.
+
+```
+git push -u origin main
+```
+
+در اولین Push، شاخه محلی (**main**) به شاخه متناظر در GitHub متصل شد و از این پس تنها با دستور زیر می‌توان تغییرات بعدی را ارسال کرد:
+
+```
+git push
+```
+
+**خروجی:**
+
+---
+
+## 🌐 بررسی Repository
+
+پس از پایان عملیات Push، مخزن GitHub بررسی شد تا از بارگذاری صحیح فایل‌ها اطمینان حاصل شود.
+
+در این مرحله فایل‌های پروژه شامل:
+
+- سورس کد FastAPI
+- فایل‌های Docker
+- فایل‌های Static
+- فایل README
+- تنظیمات پروژه
+
+در Repository قابل مشاهده هستند.
+
+**خروجی:**
+
+---
+
+## 📄 جمع‌بندی فاز چهارم
+
+در پایان این فاز، پروژه با موفقیت در GitHub منتشر شد و تمامی فایل‌های موردنیاز در قالب یک Repository عمومی در دسترس قرار گرفتند. استفاده از Git و GitHub امکان مدیریت نسخه‌های مختلف پروژه، ثبت تاریخچه تغییرات، همکاری تیمی و استقرار آسان پروژه روی سرور را فراهم می‌کند. همچنین در مراحل بعدی، سرور لینوکسی می‌تواند مستقیماً پروژه را از همین Repository دریافت (Clone) کرده و به‌روزرسانی‌های بعدی نیز تنها با اجرای دستور `git pull` اعمال شوند.

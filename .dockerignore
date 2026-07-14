@@ -1,0 +1,40 @@
+# محیط مجازی
+.venv/
+venv/
+env/
+
+# فایل‌های گیت
+.git/
+.gitignore
+
+# فایل‌های پایتون
+__pycache__/
+*.pyc
+*.pyo
+
+# فایل‌های IDE
+.vscode/
+.idea/
+*.swp
+
+# یادداشت‌های Obsidian
+.obsidian/
+
+# فایل‌های سیستمی
+.DS_Store
+Thumbs.db
+
+# فایل‌های مستندات
+README.md
+docs/
+
+# فایل‌های موقت
+tmp/
+temp/
+*.log
+*.pid
+
+# فایل‌های داکر خود پروژه (نیازی به کپی داخل image ندارند)
+Dockerfile
+docker-compose.yml
+.dockerignore
