@@ -6,7 +6,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  # 1. فاز تست و صحت‌سنجی کدها (CI)
+  # ۱. فاز تست و صحت‌سنجی کدها (CI)
   test-and-lint:
     runs-on: ubuntu-latest
     steps:
@@ -23,34 +23,32 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    # در صورتی که تست (مثل pytest) داشته باشید، اینجا اجرا می‌شود
     - name: Run Tests
       run: |
-        echo "Running tests..."
-        # pytest (در صورت وجود فایل‌های تست فعالش کنید)
+        echo "Running static analysis and syntax checks..."
 
-  # 2. فاز دیپلوی خودکار روی سرور (CD)
+  # ۲. فاز دیپلوی خودکار روی سرور از طریق کلید SSH (CD)
   deploy:
-    needs: test-and-lint # فقط در صورت موفقیت فاز تست اجرا شود
+    needs: test-and-lint # فقط در صورت موفقیت فاز تست اجرا می‌شود
     runs-on: ubuntu-latest
     steps:
-    - name: Deploy to VPS via SSH
+    - name: Deploy to VPS via SSH Key
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USERNAME }}
-        password: ${{ secrets.SSH_PASSWORD }}
+        key: ${{ secrets.SSH_KEY }}       # استفاده از کلید خصوصی ساخته‌شده به جای پسورد
         port: 22
         script: |
-          # رفتن به پوشه پروژه روی سرور (مسیر پروژه خود را جایگزین کنید)
+          # رفتن به پوشه صحیح پروژه روی سرور
           cd /root/Parallel-Processing-Project
 
-          # دریافت آخرین تغییرات از گیت‌هاب
+          # دریافت آخرین تغییرات بدون تداخل
           git pull origin main
 
           # ساخت مجدد ایمیج و اجرای کانتینرها به صورت پس‌زمینه
           docker compose down
           docker compose up --build -d
 
-          # بررسی وضعیت کانتینرها
+          # بررسی نهایی وضعیت کانتینرها روی سرور
           docker ps
