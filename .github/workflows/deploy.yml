@@ -1,0 +1,56 @@
+name: CI/CD Pipeline
+
+# این پایپ‌لاین با هر بار پش (Push) روی برنچ اصلی (main) فعال می‌شود
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  # 1. فاز تست و صحت‌سنجی کدها (CI)
+  test-and-lint:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    # در صورتی که تست (مثل pytest) داشته باشید، اینجا اجرا می‌شود
+    - name: Run Tests
+      run: |
+        echo "Running tests..."
+        # pytest (در صورت وجود فایل‌های تست فعالش کنید)
+
+  # 2. فاز دیپلوی خودکار روی سرور (CD)
+  deploy:
+    needs: test-and-lint # فقط در صورت موفقیت فاز تست اجرا شود
+    runs-on: ubuntu-latest
+    steps:
+    - name: Deploy to VPS via SSH
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        password: ${{ secrets.SSH_PASSWORD }}
+        port: 22
+        script: |
+          # رفتن به پوشه پروژه روی سرور (مسیر پروژه خود را جایگزین کنید)
+          cd /root/ParallelProcessingProject
+
+          # دریافت آخرین تغییرات از گیت‌هاب
+          git pull origin main
+
+          # ساخت مجدد ایمیج و اجرای کانتینرها به صورت پس‌زمینه
+          docker compose down
+          docker compose up --build -d
+
+          # بررسی وضعیت کانتینرها
+          docker ps
