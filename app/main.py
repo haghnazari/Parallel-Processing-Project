@@ -19,7 +19,7 @@ class ScenarioRequest(BaseModel):
     scenario_id: int
 
 
-@app.get("/ui")
+@app.get("/")
 async def ui():
     index_path = os.path.join(static_dir, "index.html")
     if os.path.exists(index_path):
