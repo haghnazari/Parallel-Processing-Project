@@ -43,7 +43,7 @@ jobs:
         port: 22
         script: |
           # رفتن به پوشه پروژه روی سرور (مسیر پروژه خود را جایگزین کنید)
-          cd /root/ParallelProcessingProject
+          cd /root/Parallel-Processing-Project
 
           # دریافت آخرین تغییرات از گیت‌هاب
           git pull origin main
