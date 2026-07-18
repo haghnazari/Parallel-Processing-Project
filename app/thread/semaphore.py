@@ -10,10 +10,10 @@ def semaphore_scenario1():
 
     semaphore = threading.Semaphore(0)
     item = 0
-    lock = threading.Lock()
+    log_lock = threading.Lock()
 
     def log(msg):
-        with lock:
+        with log_lock:
             thread_name = threading.current_thread().name
             timestamp = time.strftime("%Y-%m-%d %H:%M:%S,%MS")
             output.append(f"{timestamp}   {thread_name:<10s} INFO   {msg}")
@@ -74,30 +74,30 @@ def semaphore_scenario2():
         def __init__(self, capacity):
             self.capacity = capacity
             self.semaphore = threading.Semaphore(capacity)
-            self.lock = threading.Lock()
+            self.log_lock = threading.Lock()
             self.parked_count = 0
         
         def log(self, msg):
-            with self.lock:
+            with self.log_lock:
                 timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
                 output.append(f"{timestamp}   {msg}")
                 
-        def process_parking(self, car_name, duration):
+        def park(self, car_name, duration):
             self.log(f"{car_name} arrived and waiting for parking...")
 
             self.semaphore.acquire()
 
-            with self.lock:
+            with self.log_lock:
                 self.parked_count += 1
             
             self.log(f"{car_name} entered parking.  --->  {self.parked_count}/{self.capacity} spots used")
 
             time.sleep(duration)
 
-            with self.lock:
+            with self.log_lock:
                 self.parked_count -= 1
             
-            self.log(f"{car_name} left.  --->  {self.parked_count}/{self.capacity} spots used")
+            self.log(f"{car_name} left.             --->  {self.parked_count}/{self.capacity} spots used")
 
             self.semaphore.release()
 
@@ -110,7 +110,7 @@ def semaphore_scenario2():
             self.duration = duration
 
         def run(self):
-            self.parking.process_parking(self.car_name, self.duration)
+            self.parking.park(self.car_name, self.duration)
 
     cars = [
         ("Car-A", 2.0),
@@ -181,12 +181,12 @@ def semaphore_scenario3():
             self.sem_raw_material = threading.Semaphore(4)  # 4 خط مواد خام
             self.sem_assembly = threading.Semaphore(2)  # 2 دستگاه مونتاژ
             self.sem_quality = threading.Semaphore(1)  # 1 بازرس کیفیت
-            self.lock = threading.Lock()
+            self.log_lock = threading.RLock()
             self.completed = 0
             self.rejected = 0
 
         def log(self, msg):
-            with self.lock:
+            with self.log_lock:
                 timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
                 output.append(f"{timestamp}   {msg}")
     
@@ -206,15 +206,15 @@ def semaphore_scenario3():
             time.sleep(random.uniform(0.3, 0.5))
             passed = random.random() > 0.2  # 80% قبول می‌شوند
 
-            with self.lock:
+            with self.log_lock:
                 if passed:
                     self.completed += 1
-                    output.append(
-                        f"\n[{product_name}] Passed QC → Shipped! (Total: {self.completed})\n"
+                    self.log(
+                        f"[{product_name}] Passed QC → Shipped! (Total: {self.completed})"
                     )
                 else:
                     self.rejected += 1
-                    output.append(
+                    self.log(
                         f"[{product_name}] Failed QC → Rejected! (Rejected: {self.rejected})"
                     )
             self.sem_quality.release()
@@ -254,31 +254,25 @@ def semaphore_scenario3():
 
     exec_time = time.time() - start_time
     output.append("")
+    output.append(f"Shipped items : {line.completed}")
+    output.append(f"Rejected items: {line.rejected}")
     output.append(f"Execution time: {exec_time:.3f} seconds")
 
 
     explanation.append("سناریو 3: خط تولید کارخانه — چند سمافور همزمان")
     explanation.append("هر منبع اشتراکی می‌تواند سمافور مخصوص خودش را داشته باشد.")
     explanation.append("")
-    explanation.append("هر مرحله تولید یک سمافور با ظرفیت متفاوت دارد:")
+    explanation.append("هر مرحله ی تولید، یک سمافور با ظرفیت متفاوت دارد:")
     explanation.append("")
-    explanation.append("Stage 1 — Raw Materials : Semaphore(4)  ← 4 محصول همزمان")
-    explanation.append("Stage 2 — Assembly      : Semaphore(2)  ← 2 محصول همزمان")
-    explanation.append("Stage 3 — Quality Check : Semaphore(1)  ← 1 محصول همزمان")
+    explanation.append("مرحله 1: 4 محصول همزمان")
+    explanation.append("مرحله 2: 2 محصول همزمان")
+    explanation.append("مرحله 3: 1 محصول همزمان")
     explanation.append("")
     explanation.append("نحوه عملکرد:")
     explanation.append("1- هر محصول برای ورود به هر مرحله acquire() می‌زند")
     explanation.append("2- اگر ظرفیت مرحله پر باشد، محصول منتظر می‌ماند")
     explanation.append("3- بعد از اتمام هر مرحله release() می‌زند")
     explanation.append("4- محصول بعدی می‌تواند وارد آن مرحله شود")
-    explanation.append("")
-    explanation.append("چرا از چند سمافور استفاده می‌کنیم؟")
-    explanation.append("هر مرحله یک منبع مستقل با ظرفیت خودش است.")
-    explanation.append("با یک Lock فقط یک محصول در کل خط مجاز بود.")
-    explanation.append("با سمافور، گلوگاه (Bottleneck) به طور طبیعی شکل می‌گیرد.")
-    explanation.append("")
-    explanation.append("گلوگاه این خط تولید:")
-    explanation.append("Stage 3 با ظرفیت 1 کندترین مرحله است و بقیه را محدود می‌کند.")
 
     return {"output": "\n".join(output), "explanation": "\n".join(explanation)}
 

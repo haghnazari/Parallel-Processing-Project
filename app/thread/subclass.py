@@ -207,6 +207,7 @@ def subclass_scenario3():
             output.append(f"----> {thread_name} started monitoring {self.city}")
             time.sleep(self.interval)
             for _ in range(5):
+                self.running = True
                 self.temp_sense()
                 if not self.running:
                     output.append(f"{thread_name} failed!")

@@ -186,7 +186,7 @@ def pool_scenario3():
 
     start_time = time.time()
 
-    pool = multiprocessing.Pool(processes=4)
+    pool = multiprocessing.Pool(processes=1)
 
     results = []
     for name, numbers in datasets:

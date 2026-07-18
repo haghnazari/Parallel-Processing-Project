@@ -196,7 +196,6 @@ def queue_scenario1():
     explanation.append("multiprocessing.Queue از طریق pipe و pickle داده را بین")
     explanation.append("فرایندهای کاملاً مستقل منتقل می‌کند.")
     explanation.append("")
-    explanation.append("--- نکته شب امتحان ---")
     explanation.append("اگر Consumer سریع‌تر از Producer اجرا شود،")
     explanation.append("ممکن است صف را خالی ببیند و زودتر از موعد break بزند")
     explanation.append("در حالی که Producer هنوز آیتم تولید می‌کند.")
@@ -290,7 +289,6 @@ def queue_scenario2():
         "برای متوقف کردن هر سه Worker باید سه پیام None جداگانه بفرستیم."
     )
     explanation.append("")
-    explanation.append("--- نکته شب امتحان ---")
     explanation.append("این الگو Load Balancing نام دارد: چند Worker مستقل")
     explanation.append(
         "کار را از یک صف مشترک برمی‌دارند و بار به‌صورت خودکار توزیع می‌شود."

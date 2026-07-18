@@ -22,7 +22,7 @@ def barrier_scenario1():
 
     def runner():
         name = runners.pop()
-        time.sleep(random.randrange(0.5, 1.5))
+        time.sleep(random.uniform(0.5, 1.5))
         log(f"{name} reached the barrier.")
         finish_line.wait()
 
@@ -98,7 +98,7 @@ def barrier_scenario2():
             time.sleep(random.uniform(1.0, 3.5))
             log(f"{self.player_name:<16s} 100% loaded. Waiting in lobby.")
             match_barrier.wait()
-            log(f"{self.player_name:<16s} Spawned in the map! Let's go!")
+            log(f"{self.player_name:<16s} Let's go!")
 
     output.append("MULTIPLAYER GAME LOBBY - Barrier")
     output.append("=" * 60)

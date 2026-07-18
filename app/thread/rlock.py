@@ -96,13 +96,8 @@ def rlock_scenario2():
         def __repr__(self):
             return self.owner
 
-        def _validate(self, tx_id, amount, operation):
+        def validate(self, tx_id, amount, operation):
             with self.lock:
-                if amount <= 0:
-                    output.append(
-                        f"\nTransaction #{tx_id} Reject: [{self.owner}] Invalid amount: {amount}"
-                    )
-                    return False
                 if operation == "withdraw" and amount > self.balance:
                     output.append(
                         f"\nTransaction #{tx_id} Reject: [{self.owner}] Insufficient balance (Available={self.balance}, Requested={amount})"
@@ -112,8 +107,6 @@ def rlock_scenario2():
 
         def deposit(self, tx_id, amount):
             with self.lock:
-                if not self._validate(tx_id, amount, "deposit"):
-                    return False
                 old_balance = self.balance
                 time.sleep(2)
                 self.balance += amount
@@ -124,7 +117,7 @@ def rlock_scenario2():
 
         def withdraw(self, tx_id, amount):
             with self.lock:
-                if not self._validate(tx_id, amount, "withdraw"):
+                if not self.validate(tx_id, amount, "withdraw"):
                     return False
                 old_balance = self.balance
                 time.sleep(2)
@@ -166,25 +159,24 @@ def rlock_scenario2():
         def run(self):
             if self.transaction_type == "deposit":
                 output.append(
-                    f"\nTransaction #{self.transaction_id}: [DEPOSIT] to {self.source_account} | Amount: {self.amount}"
+                    f"Transaction #{self.transaction_id}: [DEPOSIT] to {self.source_account} | Amount: {self.amount}"
                 )
                 self.source_account.deposit(self.transaction_id, self.amount)
 
             elif self.transaction_type == "withdraw":
                 output.append(
-                    f"\nTransaction #{self.transaction_id}: [WITHDRAW] from {self.source_account} | Amount: {self.amount}"
+                    f"Transaction #{self.transaction_id}: [WITHDRAW] from {self.source_account} | Amount: {self.amount}"
                 )
                 self.source_account.withdraw(self.transaction_id, self.amount)
 
             elif self.transaction_type == "transfer":
                 output.append(
-                    f"\nTransaction #{self.transaction_id}: [TRANSFER] from {self.source_account} to {self.target_account} | Amount: {self.amount}"
+                    f"Transaction #{self.transaction_id}: [TRANSFER] from {self.source_account} to {self.target_account} | Amount: {self.amount}"
                 )
                 success = self.source_account.transfer(
                     self.transaction_id, self.target_account, self.amount
                 )
                 if success:
-                    # ✅ اصلاح شد: self.owner به self.source_account و target_account به self.target_account تغییر یافت
                     output.append(
                         f"Transaction #{self.transaction_id}: [TRANSFER] {self.amount} from {self.source_account} to {self.target_account} completed"
                     )
@@ -294,30 +286,28 @@ def rlock_scenario3():
         def save_temperature(self, temp_value):
             with self.lock:
                 thread_name = threading.current_thread().name
-                output.append(f"[{thread_name}] 🌡️ Saving temperature: {temp_value}°C")
-                time.sleep(0.2)  # شبیه‌سازی زمان ثبت در سخت‌افزار سنسور
+                output.append(f"[{thread_name}]  Saving temperature: {temp_value}°C")
+                time.sleep(0.2)
                 self.temperature = temp_value
-                output.append(f"[{thread_name}] ✅ Temperature saved")
+                output.append(f"[{thread_name}]  Temperature saved")
 
         def save_humidity(self, humid_value):
             with self.lock:
                 thread_name = threading.current_thread().name
-                output.append(f"[{thread_name}] 💧 Saving humidity: {humid_value}%")
-                time.sleep(0.2)  # شبیه‌سازی زمان ثبت در سخت‌افزار سنسور
+                output.append(f"[{thread_name}]  Saving humidity: {humid_value}%")
+                time.sleep(0.2)
                 self.humidity = humid_value
-                output.append(f"[{thread_name}] ✅ Humidity saved")
+                output.append(f"[{thread_name}]  Humidity saved")
 
         def save_snapshot(self, temp_value, humid_value):
-            #ثبت همزمان داده‌های کامل ایستگاه
-
             with self.lock:
                 thread_name = threading.current_thread().name
                 output.append("")
-                output.append(f"[{thread_name}] 📦 Starting weather snapshot...")
+                output.append(f"[{thread_name}]  Starting weather snapshot...")
                 self.save_temperature(temp_value)
                 self.save_humidity(humid_value)
 
-                output.append(f"[{thread_name}] 📦 Snapshot completed")
+                output.append(f"[{thread_name}]  Snapshot completed")
                 output.append("")
 
     class SensorTask(Thread):
@@ -337,13 +327,10 @@ def rlock_scenario3():
             elif self.mode == "HUMIDITY":
                 self.station.save_humidity(self.task_humidity)
 
-    # ==================================================
-    # اجرای سناریو
-    # ==================================================
     station = WeatherStation()
 
     output.append("=" * 75)
-    output.append("🌤️ WEATHER STATION WITH RLock")
+    output.append("WEATHER STATION WITH RLock")
     output.append("=" * 75)
     output.append("")
 
@@ -367,33 +354,25 @@ def rlock_scenario3():
 
     exec_time = time.time() - start_time
 
-    # ==================================================
-    # گزارش نهایی
-    # ==================================================
     output.append("")
     output.append("=" * 75)
-    output.append("📊 FINAL SENSOR STATE")
+    output.append(" FINAL SENSOR STATE")
     output.append("=" * 75)
-    output.append(f"🌡️ Final Temperature: {station.temperature}°C")
-    output.append(f"💧 Final Humidity: {station.humidity}%")
-    output.append(f"⏱️ Execution Time: {exec_time:.2f} seconds")
+    output.append(f" Final Temperature: {station.temperature}°C")
+    output.append(f" Final Humidity: {station.humidity}%")
+    output.append(f" Execution Time: {exec_time:.2f} seconds")
 
     # ==================================================
     # توضیحات
     # ==================================================
-    explanation.append("🌤️ سناریو 3: ثبت اطلاعات ایستگاه هواشناسی با RLock")
+    explanation.append(" سناریو 3: ثبت اطلاعات ایستگاه هواشناسی با RLock")
     explanation.append("")
-    explanation.append("🎯 هدف سناریو:")
-    explanation.append(
-        "نمایش کاربرد RLock در زمانی که یک متد قفل‌دار، "
-        "متدهای قفل‌دار دیگری را فراخوانی می‌کند."
-    )
     explanation.append("")
-    explanation.append("🔑 نحوه عملکرد:")
-    explanation.append("1️⃣ متد save_snapshot ابتدا قفل ایستگاه را می‌گیرد.")
-    explanation.append("2️⃣ سپس save_temperature را فراخوانی می‌کند.")
-    explanation.append("3️⃣ متد save_temperature دوباره همان قفل را درخواست می‌کند.")
-    explanation.append("4️⃣ سپس save_humidity نیز همان قفل را درخواست می‌کند.")
+    explanation.append(" نحوه عملکرد:")
+    explanation.append("1- متد save_snapshot ابتدا قفل ایستگاه را می‌گیرد.")
+    explanation.append("2- سپس save_temperature را فراخوانی می‌کند.")
+    explanation.append("3- متد save_temperature دوباره همان قفل را درخواست می‌کند.")
+    explanation.append("4- سپس save_humidity نیز همان قفل را درخواست می‌کند.")
     explanation.append("")
     explanation.append(
         "اگر از Lock معمولی استفاده شود، "

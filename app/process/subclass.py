@@ -50,18 +50,10 @@ class DownloadTask(multiprocessing.Process):
             f"(Size: {self.file_size}MB, Speed: {self.base_speed:.2f}MB/s, ETA: {remaining_time:.1f}s)"
         )
 
-        self.shared_state[self.file_name] = {
-            "progress": 0.0,
-            "downloaded": 0.0,
-            "current_speed": current_speed,
-            "elapsed_time": 0.0,
-            "remaining_time": remaining_time,
-            "is_running": True,
-        }
 
         last_report_time = time.time()
         while remaining_size > 0:
-            time.sleep(0.1)
+            time.sleep(0.2)
             current_speed = self.get_current_speed()
             current_time = time.time()
             chunk_size = current_speed * (current_time - last_report_time)

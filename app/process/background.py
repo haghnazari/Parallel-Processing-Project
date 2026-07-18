@@ -247,7 +247,7 @@ def background_scenario3():
         "service.exe",
     ]
 
-    user_actions = [
+    user_jobs = [
         "Open browser",
         "Edit document",
         "Save file",
@@ -272,7 +272,7 @@ def background_scenario3():
     )
 
     session = multiprocessing.Process(
-        name="User-Session", target=user_session, args=(user_actions, q), daemon=False
+        name="User-Session", target=user_session, args=(user_jobs, q), daemon=False
     )
 
     start_time = time.time()

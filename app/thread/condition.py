@@ -157,7 +157,7 @@ def condition_scenario2():
                 with condition:
                     while len(alerts_queue) == 0 and active_sensors > 0:
                         log(
-                            f"{self.name:<20s}Queue is empty. Monitor going to sleep..."
+                            f"{self.name:<20s}No Alert!. Monitor going to sleep..."
                         )
                         condition.wait()
 
@@ -295,21 +295,17 @@ def condition_scenario3():
         def run(self):
             nonlocal available_seats, active_users, system_open
 
-            # ۱. تلاش برای خرید بلیط (بلاک قفل متغیر شرطی)
             with condition:
-                # تا زمانی که صندلی نیست و سیستم باز است، کاربر در صف منتظر می‌ماند
                 while available_seats == 0 and system_open:
-                    log(f"{self.name:<20s}No seats available. Waiting in queue...")
+                    log(f"{self.name:<20s}No seats available. Waiting ...")
                     condition.wait()
 
-                # اگر سیستم بسته شده باشد، کاربرِ بیدار شده مستقیماً رد (Reject) می‌شود
                 if not system_open:
                     self.status = "rejected"
                     log(f"{self.name:<20s}System closed. Could not get a ticket.")
                     active_users -= 1
                     return
 
-                # تخصیص صندلی به کاربر
                 available_seats -= 1
                 seat_counter[0] += 1
                 self.seat = seat_counter[0]
@@ -319,10 +315,8 @@ def condition_scenario3():
                     f"(remaining: {available_seats}/{TOTAL_SEATS})"
                 )
 
-            # ۲. استفاده از بلیط (خارج از بلاک قفل جهت ایجاد موازات و شبیه‌سازی کار واقعی)
             time.sleep(self.hold_duration)
 
-            # ۳. آزادسازی منبع یا تثبیت خرید (ورود مجدد به قفل)
             with condition:
                 if self.will_cancel:
                     available_seats += 1
@@ -331,7 +325,7 @@ def condition_scenario3():
                         f"{self.name:<20s}Cancelled seat #{self.seat:<2d} "
                         f"(remaining: {available_seats}/{TOTAL_SEATS})"
                     )
-                    # 🟢 فقط یک نفر را بیدار می‌کنیم چون دقیقاً یک صندلی آزاد شده است
+                    
                     condition.notify()
                 else:
                     self.status = "used"
@@ -339,9 +333,6 @@ def condition_scenario3():
 
                 active_users -= 1
 
-                # 🛑 مدیریت هوشمند خروج امن و فرار از بن‌بست (Deadlock):
-                # اگر صندلی‌ها پر باشند و تعداد کاربران فعال دقیقاً با کاربران منتظر در صف برابر باشد،
-                # یعنی هیچ کاربرِ بیداری در سیستم نیست که بتواند صندلی آزاد کند. پس صف باید شکسته شود.
                 booked_count = len([u for u in users if u.status == "booked"])
                 if available_seats == 0 and booked_count == 0 and active_users > 0:
                     system_open = False
@@ -350,13 +341,11 @@ def condition_scenario3():
                     )
                     condition.notify_all()
 
-                # اگر آخرین کاربرِ کل سیستم پردازش شد
                 if active_users == 0:
                     system_open = False
                     log("All users processed. System closed.")
                     condition.notify_all()
 
-    # تعیین فِلگ کنسل به صورت تصادفی (احتمال ۳۰ درصد)
     cancel_flags = [random.random() < 0.3 for _ in range(TOTAL_USERS)]
 
     users = [
@@ -379,17 +368,14 @@ def condition_scenario3():
 
     start_time = time.time()
 
-    # استارت زدن نخ‌ها با فاصله زمانی بسیار کوتاه برای شبیه‌سازی هجوم کاربران
     for u in users:
         u.start()
-        time.sleep(0.05)
 
     for u in users:
         u.join()
 
     exec_time = time.time() - start_time
 
-    # جمع‌آوری آماری وضعیت نهایی
     booked = [u for u in users if u.status in ("booked", "used", "cancelled")]
     cancelled = [u for u in users if u.status == "cancelled"]
     used = [u for u in users if u.status == "used"]
@@ -406,7 +392,7 @@ def condition_scenario3():
     output.append(f"  Execution time : {exec_time:.3f} seconds")
     output.append("=" * 70)
 
-    # آرایه توضیحات ساختاریافته و علمی به سبک خودت
+
     explanation.append("=" * 70)
     explanation.append(
         "سناریو ۳: سیستم رزرو بلیط با condition"
@@ -425,7 +411,6 @@ def condition_scenario3():
         "   بازی می‌کند تا از ورود غیرمجاز نخ‌ها در زمان پُر بودن ظرفیت جلوگیری کند."
     )
     explanation.append("-" * 70)
-    explanation.append("۲. تحلیل هوشمندانه تفکیک سیگنال‌های notify() و notify_all():")
     explanation.append(
         "   * در زمان کنسل شدن بلیط: از notify() استفاده شده است؛ چرا که دقیقاً 'یک' صندلی"
     )
@@ -454,17 +439,6 @@ def condition_scenario3():
     )
     explanation.append(
         "   در نتیجه با شلیک یک notify_all عمومی، صف انتظار را به طور امن پاکسازی (Flush) می‌کند."
-    )
-    explanation.append("-" * 70)
-    explanation.append("۴. مقایسه ساختاری با سناریوهای پیشین:")
-    explanation.append(
-        "   * سناریو ۱ (موتور گرافیکی): همگام‌سازی فاز به فاز نخ‌ها در یک نقطه مشترک (Barrier)."
-    )
-    explanation.append(
-        "   * سناریو ۲ (هواشناسی): مانیتورها منتظر وقوع رویدادهای نامحدود و پی‌درپی بودند."
-    )
-    explanation.append(
-        "   * سناریو ۳ (رزرو بلیط): نخ‌ها معطل و وابسته به آزادسازی منبع توسط نخ‌های همکار خود هستند."
     )
     explanation.append("=" * 70)
 

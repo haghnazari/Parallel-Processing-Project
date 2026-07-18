@@ -39,6 +39,10 @@ def download_file(file_name, size, q):
         q.put(
             f"{timestamp()}    {'['+name+']':<22}{'[PID ' +str(pid)+']':<15}Downloading {file_name}: {downloaded}/{size} MB"
         )
+        
+    q.put(
+            f"{timestamp()}    {'['+name+']':<22}{'[PID ' +str(pid)+']':<15}Downloading {file_name} complete!"
+        )
 
 
 def image_processing(image_name, q):
@@ -154,12 +158,12 @@ def killing_scenario2():
     output.append("")
 
     download_p = multiprocessing.Process(
-        name="Download-Engine", target=download_file, args=("big_file.zip", 500, q)
+        name="Downloader", target=download_file, args=("big_file.zip", 500, q)
     )
 
     download_p.start()
 
-    time.sleep(1.8)
+    time.sleep(3.1)
 
     q.put(
         f"{timestamp()}    {'['+name+']':<22}{'[PID ' +str(pid)+']':<15}User clicked 'CANCEL' button"
